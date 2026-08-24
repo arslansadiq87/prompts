@@ -1,3 +1,4 @@
+Prompt for Flutter App
 Update the existing Flutter Firebase IoT application to complete Firebase Web configuration.
 
 The application already contains:
@@ -147,4 +148,156 @@ Do not remove:
 - Existing dashboard UI design
 
 Only add Firebase Web configuration and connect it with the existing authentication system.
+
+
+Prompt for ESP32
+Update the existing ESP32 Firebase IoT firmware.
+
+The existing firmware already contains:
+
+- WiFi connection
+- Firebase Realtime Database connection
+- BMP280 temperature sensor reading
+- Relay 1 control
+- Relay 2 control
+- Existing Firebase read/write operations
+
+The Flutter application has now been updated with Firebase Authentication.
+
+The Firebase Realtime Database structure has changed.
+
+Old structure:
+
+devices/
+    esp32_01/
+        temperature
+        relay1
+        relay2
+
+
+New structure:
+
+users/
+    USER_UID/
+        devices/
+            esp32_01/
+                name
+                sensors/
+                    temperature
+                relays/
+                    relay1/
+                        state
+                    relay2/
+                        state
+
+
+Update the ESP32 firmware according to this new structure.
+
+Requirements:
+
+1. Add permanent user assignment.
+
+Create a constant:
+
+const char* USER_UID = "VVL9RSKbFDPkEpbDhOVOIjKAIjl2";
+
+
+This ESP32 device belongs permanently to this Firebase user.
+
+The ESP32 does not need Firebase Authentication login.
+
+It should use this UID to build all database paths.
+
+
+2. Update temperature upload path:
+
+Replace the old temperature path:
+
+devices/esp32_01/temperature
+
+
+with:
+
+users/{USER_UID}/devices/esp32_01/sensors/temperature
+
+
+The BMP280 temperature reading should continue working exactly as before.
+
+
+3. Update relay control paths:
+
+Relay 1:
+
+Read state from:
+
+users/{USER_UID}/devices/esp32_01/relays/relay1/state
+
+
+Relay 2:
+
+Read state from:
+
+users/{USER_UID}/devices/esp32_01/relays/relay2/state
+
+
+When Flutter changes relay state:
+
+ESP32 should receive the updated value and control the GPIO output.
+
+
+4. Keep existing functionality:
+
+Do not remove:
+
+- WiFi connection code
+- Firebase initialization
+- BMP280 sensor code
+- Relay GPIO configuration
+- Existing timing logic
+
+
+Only update Firebase database paths.
+
+
+5. Add serial debugging:
+
+Print Firebase paths during startup.
+
+Example:
+
+User UID:
+xxxxxxxx
+
+Temperature path:
+users/xxxxxxxx/devices/esp32_01/sensors/temperature
+
+Relay paths:
+users/xxxxxxxx/devices/esp32_01/relays/relay1/state
+users/xxxxxxxx/devices/esp32_01/relays/relay2/state
+
+
+6. Verify Firebase operations:
+
+Temperature:
+
+ESP32 → Firebase
+
+users/{UID}/devices/esp32_01/sensors/temperature
+
+
+Relay:
+
+Flutter → Firebase → ESP32
+
+users/{UID}/devices/esp32_01/relays/relay/state
+
+
+7. Keep the code compatible with the current Firebase Arduino library used in the project.
+
+After modification:
+
+- Compile successfully
+- Upload successfully
+- Confirm temperature updates in Firebase
+- Confirm Flutter relay buttons control ESP32 relays
 
