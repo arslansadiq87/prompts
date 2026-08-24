@@ -1,0 +1,150 @@
+Update the existing Flutter Firebase IoT application to complete Firebase Web configuration.
+
+The application already contains:
+- Firebase Authentication using FirebaseAuth
+- AuthGate widget
+- Login/Register screen
+- Existing IoT dashboard
+- Firebase Realtime Database integration
+- firebase_options.dart created for Web configuration
+
+Now integrate the Firebase Web App configuration.
+
+Requirements:
+
+1. Update Firebase initialization:
+
+- Ensure Firebase.initializeApp() works correctly on:
+  - Android
+  - Web (Chrome)
+
+- Use DefaultFirebaseOptions.currentPlatform.
+
+Example:
+
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
+
+
+2. Update firebase_options.dart:
+
+Create a complete Firebase configuration file.
+
+The configuration must support:
+
+Web:
+- apiKey
+- appId
+- messagingSenderId
+- projectId
+- authDomain
+- databaseURL
+- storageBucket
+
+Android:
+- Keep existing Android Firebase configuration.
+
+
+3. Add Firebase Web configuration values:
+
+Use these values:
+
+FIREBASE_API_KEY:
+[PASTE YOUR API KEY HERE]
+
+FIREBASE_APP_ID:
+[PASTE YOUR APP ID HERE]
+
+FIREBASE_MESSAGING_SENDER_ID:
+[PASTE YOUR MESSAGING SENDER ID HERE]
+
+FIREBASE_PROJECT_ID:
+[PASTE YOUR PROJECT ID HERE]
+
+FIREBASE_AUTH_DOMAIN:
+[PASTE YOUR AUTH DOMAIN HERE]
+
+FIREBASE_DATABASE_URL:
+[PASTE YOUR REALTIME DATABASE URL HERE]
+
+FIREBASE_STORAGE_BUCKET:
+[PASTE YOUR STORAGE BUCKET HERE]
+
+
+4. Verify Firebase Authentication:
+
+Check that:
+
+- Email/password login works on Chrome
+- User registration creates Firebase Authentication users
+- Existing logged-in users automatically open dashboard
+- Logout returns to authentication screen
+
+
+5. Verify Realtime Database:
+
+The database structure must remain:
+
+users/
+   {userUID}/
+        devices/
+             esp32_01/
+                  temperature
+                  relay1
+                  relay2
+
+
+All Flutter database listeners and writes must use:
+
+FirebaseAuth.instance.currentUser!.uid
+
+
+Example:
+
+Before:
+
+devices/esp32_01/temperature
+
+
+After:
+
+users/{userUID}/devices/esp32_01/temperature
+
+
+6. Add error handling:
+
+If Firebase initialization fails:
+
+- Do not show a blank Chrome page
+- Display a clear startup error message
+- Show missing Firebase configuration information
+
+
+7. Test the application:
+
+Run:
+
+flutter analyze
+
+flutter test
+
+flutter build web
+
+
+Confirm that:
+
+- Chrome opens correctly
+- Login screen appears when no user is logged in
+- Dashboard appears after login
+- Database reads and writes work correctly
+
+
+Do not remove:
+- BMP280 temperature monitoring
+- Relay 1 control
+- Relay 2 control
+- Existing dashboard UI design
+
+Only add Firebase Web configuration and connect it with the existing authentication system.
+
